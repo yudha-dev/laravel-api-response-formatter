@@ -53,4 +53,30 @@ class LoginController extends Controller
             ], 'Authentication Failed', 500);
         }
     }
+
+    //register
+    public function register(Request $request)
+    {
+        try {
+            $user = User::create([
+                'nama'      => $request->nama,
+                'email'     => $request->email,
+                'password'  => Hash::make($request->password),
+                'alamat'    => $request->alamat,
+                'no_hp'     => $request->no_hp
+            ]);
+
+            //example response split meta and data 
+            return ResponseFormatter::success([
+                'access_token'   => $user->createToken('authToken')->plainTextToken,
+                'token_type'     => 'Bearer',
+                'user'           => $user
+            ], 'User Registered', 200);
+        } catch (\Exception $e) {
+            return ResponseFormatter::failed([
+                'message' => 'Something went wrong',
+                'error' => $e
+            ], 'Pendaftaran Gagal', 401);
+        }
+    }
 }
